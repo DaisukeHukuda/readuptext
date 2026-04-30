@@ -398,7 +398,8 @@
     const speedBtn     = document.getElementById('speed-btn');
 
     const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
-    let speedIdx = 2;
+    let speedIdx = 4;
+    speedBtn.textContent = '1.5×';
 
     speedBtn.addEventListener('click', () => {
       speedIdx = (speedIdx + 1) % SPEEDS.length;
