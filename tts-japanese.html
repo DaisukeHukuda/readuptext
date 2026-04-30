@@ -393,7 +393,7 @@
     // reading time display
     function updateReadingTime() {
       const t = textInput.value.trim();
-      if (!t) { episodeTitle.textContent = 'テキストを貼り付けてください'; return; }
+      if (!t) { episodeTitle.textContent = '所要時間'; return; }
       const secs = Math.round(t.length / (5 * SPEEDS[speedIdx]));
       const m = Math.floor(secs / 60);
       const s = secs % 60;
@@ -470,6 +470,7 @@
     let chunks      = [];
     let chunkStarts = [];
     let chunkIdx    = 0;
+    let playingText = '';
 
     function buildChunks(text) {
       chunks      = text.match(/.{1,200}/g) || [text];
@@ -505,6 +506,7 @@
 
       synth.cancel();
       buildChunks(text);
+      playingText = text;
       chunkIdx   = 0;
       totalChars = text.length;
       pauseAt    = 0;
@@ -542,14 +544,20 @@
         pauseAt  += (Date.now() - startTime) / 1000;
         startTime = null;
         cancelAnimationFrame(rafId);
+        hideDisplay();
         setPlaying(false);
         btnStop.disabled = false;
       } else if (isPaused) {
-        synth.resume();
-        isPaused  = false;
-        startTime = Date.now();
-        rafId = requestAnimationFrame(tickProgress);
-        setPlaying(true);
+        if (textInput.value.trim() !== playingText) {
+          startReading();
+        } else {
+          synth.resume();
+          isPaused  = false;
+          startTime = Date.now();
+          showDisplay();
+          rafId = requestAnimationFrame(tickProgress);
+          setPlaying(true);
+        }
       }
     });
 
