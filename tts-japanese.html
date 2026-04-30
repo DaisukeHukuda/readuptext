@@ -312,7 +312,6 @@
 
     <!-- Text input / display -->
     <div class="text-panel">
-      <div class="panel-label">貼り付けスペース</div>
       <textarea id="text-input" placeholder="ここにテキストを貼り付けてください..."></textarea>
       <div id="text-display" class="text-display"></div>
     </div>
@@ -418,18 +417,24 @@
     // voices
     function loadVoices() {
       const all = synth.getVoices();
-      const ja  = all.filter(v => v.lang.startsWith('ja'));
-      const src = ja.length ? ja : all;
+      if (!all.length) return;
+      const ja    = all.filter(v => v.lang.startsWith('ja'));
+      const other = all.filter(v => !v.lang.startsWith('ja'));
+      const src   = [...ja, ...other];
+      const prev  = voiceSelect.selectedOptions[0]?.dataset.name;
       voiceSelect.innerHTML = '';
       src.forEach(v => {
         const o = document.createElement('option');
-        o.textContent  = v.name;
+        o.textContent  = ja.length > 1 ? `${v.name} (${v.lang})` : v.name;
         o.dataset.name = v.name;
+        if (v.name === prev) o.selected = true;
         voiceSelect.appendChild(o);
       });
     }
     loadVoices();
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+    // iOS: voices load after first user gesture
+    document.addEventListener('touchstart', loadVoices, { once: true });
 
     // episode title from textarea
     textInput.addEventListener('input', () => {
