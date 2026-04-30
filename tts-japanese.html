@@ -23,19 +23,21 @@
       font-family: "Circular", "Hiragino Sans", "Yu Gothic UI", -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
+      height: 100dvh;
       display: grid;
       grid-template-rows: 1fr auto;
+      overflow: hidden;
     }
 
     /* ── Main scroll area ── */
     .main {
       overflow-y: auto;
-      padding: 32px 24px 24px;
+      padding: 14px 20px 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
+      gap: 12px;
+      min-height: 0;
     }
 
     /* ── Artwork + meta ── */
@@ -43,13 +45,13 @@
       width: 100%;
       max-width: 480px;
       display: flex;
-      gap: 20px;
+      gap: 14px;
       align-items: center;
     }
 
     .artwork {
-      width: 88px;
-      height: 88px;
+      width: 64px;
+      height: 64px;
       border-radius: var(--radius);
       background: var(--surface2);
       flex-shrink: 0;
@@ -83,15 +85,18 @@
     .text-panel {
       width: 100%;
       max-width: 480px;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
     }
 
     .auto-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       color: var(--text);
       line-height: 1.3;
-      margin-bottom: 6px;
-      min-height: 1.4em;
+      margin-bottom: 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -104,12 +109,13 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--subtext);
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
 
     textarea {
       width: 100%;
-      height: clamp(240px, 40vh, 420px);
+      flex: 1;
+      min-height: 100px;
       background: var(--surface2);
       border: 1px solid transparent;
       border-radius: var(--radius);
@@ -191,7 +197,7 @@
     .player-bar {
       background: var(--surface);
       border-top: 1px solid var(--surface2);
-      padding: 12px 24px 20px;
+      padding: 8px 20px max(12px, env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -203,7 +209,7 @@
       display: flex;
       align-items: center;
       gap: 20px;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .ctrl-btn {
@@ -247,7 +253,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 10px;
+      margin-top: 6px;
     }
 
     .speed-btn {
