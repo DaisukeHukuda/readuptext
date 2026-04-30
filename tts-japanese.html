@@ -120,10 +120,19 @@
 
     .progress-bar-wrap {
       position: relative;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .progress-track {
+      position: absolute;
+      left: 0; right: 0;
       height: 4px;
       background: var(--surface3);
       border-radius: 2px;
-      cursor: pointer;
+      pointer-events: none;
     }
 
     .progress-fill {
@@ -144,8 +153,8 @@
       right: -6px;
       top: 50%;
       transform: translateY(-50%);
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       background: var(--text);
       opacity: 0;
@@ -257,36 +266,6 @@
     }
     .voice-pill select option { background: var(--surface2); color: var(--text); }
 
-    .pitch-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .pitch-wrap span {
-      font-size: 0.7rem;
-      color: var(--subtext);
-      white-space: nowrap;
-    }
-
-    input[type="range"].slim {
-      -webkit-appearance: none;
-      width: 72px;
-      height: 3px;
-      background: var(--surface3);
-      border-radius: 2px;
-      outline: none;
-      cursor: pointer;
-    }
-    input[type="range"].slim::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--subtext);
-      transition: background 0.1s;
-    }
-    input[type="range"].slim:hover::-webkit-slider-thumb { background: var(--text); }
 
     /* ── No support ── */
     .no-support {
@@ -333,8 +312,10 @@
     <!-- Progress -->
     <div class="progress-section">
       <div class="progress-bar-wrap" id="progress-wrap">
-        <div class="progress-fill" id="progress-fill">
-          <div class="progress-thumb"></div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill">
+            <div class="progress-thumb"></div>
+          </div>
         </div>
       </div>
       <div class="time-row">
@@ -389,11 +370,6 @@
         <select id="voice-select"></select>
       </div>
 
-      <!-- Pitch -->
-      <div class="pitch-wrap">
-        <span>音程</span>
-        <input type="range" class="slim" id="pitch" min="0.5" max="2.0" step="0.1" value="1.0">
-      </div>
     </div>
   </div>
 
@@ -406,7 +382,6 @@
 
     const textInput     = document.getElementById('text-input');
     const voiceSelect   = document.getElementById('voice-select');
-    const pitchInput    = document.getElementById('pitch');
     const btnPlayPause  = document.getElementById('btn-play-pause');
     const btnStop       = document.getElementById('btn-stop');
     const btnRewind     = document.getElementById('btn-rewind');
@@ -500,7 +475,6 @@
       if (v) utt.voice = v;
       utt.lang  = v ? v.lang : 'ja-JP';
       utt.rate  = SPEEDS[speedIdx];
-      utt.pitch = parseFloat(pitchInput.value);
       utt.onend = () => { chunkIdx++; speakFrom(chunkIdx); };
       utt.onerror = (e) => {
         if (e.error !== 'interrupted' && e.error !== 'canceled') stopAll();
@@ -564,14 +538,19 @@
     btnStop.addEventListener('click', stopAll);
 
     btnRewind.addEventListener('click', () => {
+      const currentSecs = isPaused ? pauseAt : pauseAt + (Date.now() - startTime) / 1000;
+      const targetSecs  = Math.max(0, currentSecs - 15);
+      const targetChars = targetSecs * 5 * SPEEDS[speedIdx];
+      const targetIdx   = Math.max(0, Math.floor(targetChars / 200));
+
       synth.cancel();
       cancelAnimationFrame(rafId);
-      pauseAt   = 0;
+      chunkIdx  = targetIdx;
+      pauseAt   = targetSecs;
       startTime = Date.now();
-      chunkIdx  = 0;
       isPaused  = false;
       rafId = requestAnimationFrame(tickProgress);
-      speakFrom(0);
+      speakFrom(chunkIdx);
       setPlaying(true);
     });
 
