@@ -264,23 +264,6 @@
     }
     .speed-btn:hover { color: var(--text); border-color: var(--text); }
 
-    .voice-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .voice-pill select {
-      background: none;
-      border: none;
-      color: var(--subtext);
-      font-size: 0.75rem;
-      font-family: inherit;
-      cursor: pointer;
-      outline: none;
-      max-width: 160px;
-    }
-    .voice-pill select option { background: var(--surface2); color: var(--text); }
 
     /* ── No support ── */
     .no-support {
@@ -368,13 +351,6 @@
     <!-- Secondary controls -->
     <div class="secondary-controls">
       <button class="speed-btn" id="speed-btn">1×</button>
-      <div class="voice-pill">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b3b3b3" stroke-width="2">
-          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/>
-        </svg>
-        <select id="voice-select"></select>
-      </div>
     </div>
   </div>
 
@@ -384,7 +360,6 @@
 
     const textInput    = document.getElementById('text-input');
     const textDisplay  = document.getElementById('text-display');
-    const voiceSelect  = document.getElementById('voice-select');
     const btnPlayPause = document.getElementById('btn-play-pause');
     const btnStop      = document.getElementById('btn-stop');
     const btnRewind    = document.getElementById('btn-rewind');
@@ -404,6 +379,7 @@
       speedIdx = (speedIdx + 1) % SPEEDS.length;
       const s = SPEEDS[speedIdx];
       speedBtn.textContent = s === 1 ? '1×' : s + '×';
+      updateReadingTime();
       if (synth.speaking && !synth.paused) {
         synth.cancel();
         cancelAnimationFrame(rafId);
@@ -414,35 +390,18 @@
       }
     });
 
-    // voices
-    function loadVoices() {
-      const all = synth.getVoices();
-      if (!all.length) return;
-      const ja    = all.filter(v => v.lang.startsWith('ja'));
-      const other = all.filter(v => !v.lang.startsWith('ja'));
-      const src   = [...ja, ...other];
-      const prev  = voiceSelect.selectedOptions[0]?.dataset.name;
-      voiceSelect.innerHTML = '';
-      src.forEach(v => {
-        const o = document.createElement('option');
-        o.textContent  = ja.length > 1 ? `${v.name} (${v.lang})` : v.name;
-        o.dataset.name = v.name;
-        if (v.name === prev) o.selected = true;
-        voiceSelect.appendChild(o);
-      });
-    }
-    loadVoices();
-    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
-    // iOS: voices load after first user gesture
-    document.addEventListener('touchstart', loadVoices, { once: true });
-
-    // episode title from textarea
-    textInput.addEventListener('input', () => {
+    // reading time display
+    function updateReadingTime() {
       const t = textInput.value.trim();
-      episodeTitle.textContent = t
-        ? t.replace(/\s+/g, ' ').slice(0, 60) + (t.length > 60 ? '…' : '')
-        : 'テキストを貼り付けてください';
-    });
+      if (!t) { episodeTitle.textContent = 'テキストを貼り付けてください'; return; }
+      const secs = Math.round(t.length / (5 * SPEEDS[speedIdx]));
+      const m = Math.floor(secs / 60);
+      const s = secs % 60;
+      episodeTitle.textContent = m > 0
+        ? `約${m}分${s > 0 ? s + '秒' : ''}`
+        : `約${s}秒`;
+    }
+    textInput.addEventListener('input', updateReadingTime);
 
     // ── Highlight helpers ──
     function escapeHtml(s) {
@@ -521,11 +480,11 @@
 
     function speakFrom(idx) {
       if (idx >= chunks.length) { stopAll(); return; }
-      const utt       = new SpeechSynthesisUtterance(chunks[idx]);
-      const sel       = voiceSelect.selectedOptions[0];
-      const v         = sel ? synth.getVoices().find(x => x.name === sel.dataset.name) : null;
+      const utt  = new SpeechSynthesisUtterance(chunks[idx]);
+      const all  = synth.getVoices();
+      const v    = all.find(x => x.name === 'Kyoko') || all.find(x => x.lang.startsWith('ja')) || null;
       if (v) utt.voice = v;
-      utt.lang  = v ? v.lang : 'ja-JP';
+      utt.lang = v ? v.lang : 'ja-JP';
       utt.rate  = SPEEDS[speedIdx];
 
       const chunkStart = chunkStarts[idx];
