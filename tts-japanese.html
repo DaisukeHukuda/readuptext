@@ -305,13 +305,6 @@
 
     <!-- Episode header -->
     <div class="episode-header">
-      <div class="artwork">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M12 18.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13Z"/>
-          <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
-          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-        </svg>
-      </div>
       <div class="episode-meta">
         <div class="episode-title" id="episode-title">テキストを貼り付けてください</div>
       </div>
@@ -411,6 +404,14 @@
       speedIdx = (speedIdx + 1) % SPEEDS.length;
       const s = SPEEDS[speedIdx];
       speedBtn.textContent = s === 1 ? '1×' : s + '×';
+      if (synth.speaking && !synth.paused) {
+        synth.cancel();
+        cancelAnimationFrame(rafId);
+        startTime = Date.now();
+        isPaused  = false;
+        rafId = requestAnimationFrame(tickProgress);
+        speakFrom(chunkIdx);
+      }
     });
 
     // voices
