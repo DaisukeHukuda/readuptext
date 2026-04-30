@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>テキスト読み上げ</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -398,8 +398,8 @@
     const speedBtn     = document.getElementById('speed-btn');
 
     const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
-    let speedIdx = 4;
-    speedBtn.textContent = '1.5×';
+    let speedIdx = 3;
+    speedBtn.textContent = '1.25×';
 
     speedBtn.addEventListener('click', () => {
       speedIdx = (speedIdx + 1) % SPEEDS.length;
