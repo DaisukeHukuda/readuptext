@@ -85,6 +85,19 @@
       max-width: 480px;
     }
 
+    .auto-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 6px;
+      min-height: 1.4em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .auto-title:empty { display: none; }
+
     .panel-label {
       font-size: 0.7rem;
       font-weight: 700;
@@ -96,7 +109,7 @@
 
     textarea {
       width: 100%;
-      height: 180px;
+      height: clamp(240px, 40vh, 420px);
       background: var(--surface2);
       border: 1px solid transparent;
       border-radius: var(--radius);
@@ -309,7 +322,8 @@
 
     <!-- Text input -->
     <div class="text-panel">
-      <div class="panel-label">エピソード内容</div>
+      <div class="auto-title" id="auto-title"></div>
+      <div class="panel-label">貼り付けスペース</div>
       <textarea id="text-input" placeholder="ここにテキストを貼り付けてください..."></textarea>
     </div>
 
@@ -402,6 +416,7 @@
     const timeElapsed   = document.getElementById('time-elapsed');
     const timeRemain    = document.getElementById('time-remain');
     const episodeTitle  = document.getElementById('episode-title');
+    const autoTitle     = document.getElementById('auto-title');
     const speedBtn      = document.getElementById('speed-btn');
 
     const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
@@ -429,12 +444,20 @@
     loadVoices();
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
 
-    // update episode title from textarea
+    // update titles from textarea
     textInput.addEventListener('input', () => {
       const t = textInput.value.trim();
+      // episode header title
       episodeTitle.textContent = t
         ? t.replace(/\s+/g, ' ').slice(0, 60) + (t.length > 60 ? '…' : '')
         : 'テキストを貼り付けてください';
+      // one-line auto title above the panel label
+      if (t) {
+        const first = t.split(/[。\.!\?！？\n]/)[0].trim();
+        autoTitle.textContent = first.slice(0, 60) + (first.length > 60 ? '…' : '');
+      } else {
+        autoTitle.textContent = '';
+      }
     });
 
     // progress / timer
