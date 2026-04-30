@@ -74,13 +74,6 @@
       text-overflow: ellipsis;
     }
 
-    .episode-show {
-      font-size: 0.8rem;
-      color: var(--green);
-      font-weight: 700;
-      margin-top: 4px;
-    }
-
     /* ── Text input panel ── */
     .text-panel {
       width: 100%;
@@ -91,18 +84,6 @@
       flex-direction: column;
     }
 
-    .auto-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.3;
-      margin-bottom: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .auto-title:empty { display: none; }
-
     .panel-label {
       font-size: 0.7rem;
       font-weight: 700;
@@ -112,7 +93,7 @@
       margin-bottom: 6px;
     }
 
-    textarea {
+    textarea, .text-display {
       width: 100%;
       flex: 1;
       min-height: 100px;
@@ -129,7 +110,20 @@
       transition: border-color 0.15s;
     }
     textarea:focus { border-color: var(--subtext); }
-    textarea::placeholder { color: var(--surface3); }
+    textarea::placeholder { color: var(--green); }
+
+    .text-display {
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: none;
+      cursor: default;
+    }
+    .text-display mark {
+      background: none;
+      color: var(--green);
+      font-weight: 700;
+    }
 
     /* ── Progress bar ── */
     .progress-section {
@@ -168,7 +162,6 @@
     }
 
     .progress-bar-wrap:hover .progress-fill { background: var(--green); }
-
     .progress-bar-wrap:hover .progress-thumb { opacity: 1; }
 
     .progress-thumb {
@@ -289,7 +282,6 @@
     }
     .voice-pill select option { background: var(--surface2); color: var(--text); }
 
-
     /* ── No support ── */
     .no-support {
       display: none;
@@ -313,8 +305,8 @@
 
     <!-- Episode header -->
     <div class="episode-header">
-      <div class="artwork" id="artwork">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <div class="artwork">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M12 18.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13Z"/>
           <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
           <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
@@ -322,15 +314,14 @@
       </div>
       <div class="episode-meta">
         <div class="episode-title" id="episode-title">テキストを貼り付けてください</div>
-        <div class="episode-show">テキスト読み上げ</div>
       </div>
     </div>
 
-    <!-- Text input -->
+    <!-- Text input / display -->
     <div class="text-panel">
-      <div class="auto-title" id="auto-title"></div>
       <div class="panel-label">貼り付けスペース</div>
       <textarea id="text-input" placeholder="ここにテキストを貼り付けてください..."></textarea>
+      <div id="text-display" class="text-display"></div>
     </div>
 
     <!-- Progress -->
@@ -355,13 +346,10 @@
       <!-- Skip back 15s -->
       <button class="ctrl-btn" id="btn-rewind" title="15秒戻る" disabled>
         <svg width="30" height="30" viewBox="0 0 28 28" fill="none">
-          <!-- CCW arc: center(14,16) r=10, from top(14,6) to just right of top -->
           <path d="M 14 6 A 10 10 0 1 0 17.4 6.6"
                 stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-          <!-- Arrowhead at top pointing left (CCW direction) -->
           <path d="M 18 3 L 14 6 L 18 9"
                 stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- "15" text -->
           <text x="14" y="21" text-anchor="middle" font-size="8.5" font-weight="700"
                 font-family="sans-serif" fill="currentColor">15</text>
         </svg>
@@ -369,11 +357,9 @@
 
       <!-- Play / Pause -->
       <button class="play-btn" id="btn-play-pause">
-        <!-- Play icon -->
         <svg id="icon-play" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
           <path d="M8 5v14l11-7z"/>
         </svg>
-        <!-- Pause icon (hidden) -->
         <svg id="icon-pause" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none">
           <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
         </svg>
@@ -389,10 +375,7 @@
 
     <!-- Secondary controls -->
     <div class="secondary-controls">
-      <!-- Speed -->
       <button class="speed-btn" id="speed-btn">1×</button>
-
-      <!-- Voice select -->
       <div class="voice-pill">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b3b3b3" stroke-width="2">
           <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
@@ -400,30 +383,26 @@
         </svg>
         <select id="voice-select"></select>
       </div>
-
     </div>
   </div>
 
   <script>
     const synth = window.speechSynthesis;
+    if (!synth) document.getElementById('no-support').style.display = 'block';
 
-    if (!synth) {
-      document.getElementById('no-support').style.display = 'block';
-    }
-
-    const textInput     = document.getElementById('text-input');
-    const voiceSelect   = document.getElementById('voice-select');
-    const btnPlayPause  = document.getElementById('btn-play-pause');
-    const btnStop       = document.getElementById('btn-stop');
-    const btnRewind     = document.getElementById('btn-rewind');
-    const iconPlay      = document.getElementById('icon-play');
-    const iconPause     = document.getElementById('icon-pause');
-    const progressFill  = document.getElementById('progress-fill');
-    const timeElapsed   = document.getElementById('time-elapsed');
-    const timeRemain    = document.getElementById('time-remain');
-    const episodeTitle  = document.getElementById('episode-title');
-    const autoTitle     = document.getElementById('auto-title');
-    const speedBtn      = document.getElementById('speed-btn');
+    const textInput    = document.getElementById('text-input');
+    const textDisplay  = document.getElementById('text-display');
+    const voiceSelect  = document.getElementById('voice-select');
+    const btnPlayPause = document.getElementById('btn-play-pause');
+    const btnStop      = document.getElementById('btn-stop');
+    const btnRewind    = document.getElementById('btn-rewind');
+    const iconPlay     = document.getElementById('icon-play');
+    const iconPause    = document.getElementById('icon-pause');
+    const progressFill = document.getElementById('progress-fill');
+    const timeElapsed  = document.getElementById('time-elapsed');
+    const timeRemain   = document.getElementById('time-remain');
+    const episodeTitle = document.getElementById('episode-title');
+    const speedBtn     = document.getElementById('speed-btn');
 
     const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
     let speedIdx = 2;
@@ -450,30 +429,48 @@
     loadVoices();
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
 
-    // update titles from textarea
+    // episode title from textarea
     textInput.addEventListener('input', () => {
       const t = textInput.value.trim();
-      // episode header title
       episodeTitle.textContent = t
         ? t.replace(/\s+/g, ' ').slice(0, 60) + (t.length > 60 ? '…' : '')
         : 'テキストを貼り付けてください';
-      // one-line auto title above the panel label
-      if (t) {
-        const first = t.split(/[。\.!\?！？\n]/)[0].trim();
-        autoTitle.textContent = first.slice(0, 60) + (first.length > 60 ? '…' : '');
-      } else {
-        autoTitle.textContent = '';
-      }
     });
 
-    // progress / timer
-    let startTime = null;
-    let elapsed   = 0;
+    // ── Highlight helpers ──
+    function escapeHtml(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function highlightAt(globalStart, len) {
+      const text   = textInput.value;
+      const end    = Math.min(globalStart + len, text.length);
+      const before = escapeHtml(text.slice(0, globalStart));
+      const word   = escapeHtml(text.slice(globalStart, end));
+      const after  = escapeHtml(text.slice(end));
+      textDisplay.innerHTML = before + '<mark>' + word + '</mark>' + after;
+      const mark = textDisplay.querySelector('mark');
+      if (mark) mark.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    function showDisplay() {
+      textInput.style.display  = 'none';
+      textDisplay.style.display = '';
+      textDisplay.textContent  = textInput.value;
+    }
+
+    function hideDisplay() {
+      textDisplay.style.display = 'none';
+      textDisplay.innerHTML    = '';
+      textInput.style.display  = '';
+    }
+
+    // ── Progress / timer ──
+    let startTime  = null;
     let totalChars = 0;
-    let spokenChars = 0;
-    let rafId     = null;
-    let isPaused  = false;
-    let pauseAt   = 0;
+    let rafId      = null;
+    let isPaused   = false;
+    let pauseAt    = 0;
 
     function fmt(sec) {
       const m = Math.floor(sec / 60);
@@ -487,10 +484,9 @@
 
     function tickProgress() {
       if (!startTime) return;
-      const now     = Date.now();
-      const secs    = (now - startTime) / 1000 + pauseAt;
-      const total   = estimateDuration(totalChars);
-      const ratio   = Math.min(secs / total, 1);
+      const secs  = (Date.now() - startTime) / 1000 + pauseAt;
+      const total = estimateDuration(totalChars);
+      const ratio = Math.min(secs / total, 1);
       progressFill.style.width = (ratio * 100) + '%';
       timeElapsed.textContent  = fmt(secs);
       timeRemain.textContent   = '-' + fmt(Math.max(0, total - secs));
@@ -504,18 +500,33 @@
       btnRewind.disabled      = !playing && !isPaused;
     }
 
-    let chunks = [];
-    let chunkIdx = 0;
+    // ── Chunks ──
+    let chunks      = [];
+    let chunkStarts = [];
+    let chunkIdx    = 0;
+
+    function buildChunks(text) {
+      chunks      = text.match(/.{1,200}/g) || [text];
+      chunkStarts = [];
+      let pos = 0;
+      chunks.forEach(c => { chunkStarts.push(pos); pos += c.length; });
+    }
 
     function speakFrom(idx) {
       if (idx >= chunks.length) { stopAll(); return; }
-      const utt = new SpeechSynthesisUtterance(chunks[idx]);
-      const sel = voiceSelect.selectedOptions[0];
-      const v   = sel ? synth.getVoices().find(x => x.name === sel.dataset.name) : null;
+      const utt       = new SpeechSynthesisUtterance(chunks[idx]);
+      const sel       = voiceSelect.selectedOptions[0];
+      const v         = sel ? synth.getVoices().find(x => x.name === sel.dataset.name) : null;
       if (v) utt.voice = v;
       utt.lang  = v ? v.lang : 'ja-JP';
       utt.rate  = SPEEDS[speedIdx];
-      utt.onend = () => { chunkIdx++; speakFrom(chunkIdx); };
+
+      const chunkStart = chunkStarts[idx];
+      utt.onboundary = (e) => {
+        if (e.name !== 'word') return;
+        highlightAt(chunkStart + e.charIndex, e.charLength || 1);
+      };
+      utt.onend   = () => { chunkIdx++; speakFrom(chunkIdx); };
       utt.onerror = (e) => {
         if (e.error !== 'interrupted' && e.error !== 'canceled') stopAll();
       };
@@ -527,14 +538,14 @@
       if (!text) { textInput.focus(); return; }
 
       synth.cancel();
-      chunks     = text.match(/.{1,200}/g) || [text];
+      buildChunks(text);
       chunkIdx   = 0;
       totalChars = text.length;
-      spokenChars = 0;
       pauseAt    = 0;
       startTime  = Date.now();
       isPaused   = false;
 
+      showDisplay();
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(tickProgress);
       speakFrom(0);
@@ -551,8 +562,9 @@
       timeElapsed.textContent  = '0:00';
       timeRemain.textContent   = '0:00';
       setPlaying(false);
-      btnStop.disabled    = true;
-      btnRewind.disabled  = true;
+      btnStop.disabled   = true;
+      btnRewind.disabled = true;
+      hideDisplay();
     }
 
     btnPlayPause.addEventListener('click', () => {
@@ -560,8 +572,8 @@
         startReading();
       } else if (synth.speaking && !synth.paused) {
         synth.pause();
-        isPaused = true;
-        pauseAt += (Date.now() - startTime) / 1000;
+        isPaused  = true;
+        pauseAt  += (Date.now() - startTime) / 1000;
         startTime = null;
         cancelAnimationFrame(rafId);
         setPlaying(false);
@@ -581,7 +593,7 @@
       const currentSecs = isPaused ? pauseAt : pauseAt + (Date.now() - startTime) / 1000;
       const targetSecs  = Math.max(0, currentSecs - 15);
       const targetChars = targetSecs * 5 * SPEEDS[speedIdx];
-      const targetIdx   = Math.max(0, Math.floor(targetChars / 200));
+      const targetIdx   = Math.max(0, Math.min(chunks.length - 1, Math.floor(targetChars / 200)));
 
       synth.cancel();
       cancelAnimationFrame(rafId);
