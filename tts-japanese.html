@@ -268,6 +268,23 @@
       flex-shrink: 0;
     }
 
+    /* ── Logo bar ── */
+    .logo-bar {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+    .logo-text {
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: var(--text);
+      line-height: 1;
+    }
+
     /* ── No support ── */
     .no-support {
       display: none;
@@ -285,6 +302,27 @@
 <body>
 
   <div class="main">
+
+    <!-- Logo -->
+    <div class="logo-bar">
+      <!-- Equalizer bars: 5本 ratio [0.50,0.80,1.00,0.70,0.40] base=24 maxH=19 barW=3 gap=2 -->
+      <svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
+        <!-- ghost tracks (dark green) -->
+        <rect x="1"  y="5" width="3" height="19" rx="1.5" fill="#18723a"/>
+        <rect x="6"  y="5" width="3" height="19" rx="1.5" fill="#18723a"/>
+        <rect x="11" y="5" width="3" height="19" rx="1.5" fill="#18723a"/>
+        <rect x="16" y="5" width="3" height="19" rx="1.5" fill="#18723a"/>
+        <rect x="21" y="5" width="3" height="19" rx="1.5" fill="#18723a"/>
+        <!-- bright bars (Spotify green) -->
+        <rect x="1"  y="14.5" width="3" height="9.5" rx="1.5" fill="#1db954"/>
+        <rect x="6"  y="9.8"  width="3" height="14.2" rx="1.5" fill="#1db954"/>
+        <rect x="11" y="5"    width="3" height="19"   rx="1.5" fill="#1db954"/>
+        <rect x="16" y="10.7" width="3" height="13.3" rx="1.5" fill="#1db954"/>
+        <rect x="21" y="17.4" width="3" height="6.6"  rx="1.5" fill="#1db954"/>
+      </svg>
+      <span class="logo-text">TEKIYOMI</span>
+    </div>
+
     <div class="no-support" id="no-support">
       お使いのブラウザは Web Speech API に対応していません。Chrome または Safari をお使いください。
     </div>
