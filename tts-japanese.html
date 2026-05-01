@@ -268,6 +268,160 @@
       flex-shrink: 0;
     }
 
+    /* ── Summarize button ── */
+    .summarize-btn {
+      display: none;
+      align-self: flex-end;
+      background: none;
+      border: 1px solid var(--surface3);
+      color: var(--subtext);
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s, opacity 0.15s;
+      letter-spacing: 0.03em;
+      margin-top: 6px;
+    }
+    .summarize-btn.visible { display: block; }
+    .summarize-btn:hover { color: var(--text); border-color: var(--subtext); }
+    .summarize-btn.loading { opacity: 0.5; pointer-events: none; }
+
+    /* ── Summary section ── */
+    .summary-section {
+      display: none;
+      width: 100%;
+      max-width: 480px;
+      background: var(--surface);
+      border: 1px solid var(--surface2);
+      border-radius: var(--radius);
+      padding: 14px 16px 16px;
+    }
+    .summary-section.visible { display: block; }
+
+    .summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .summary-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+    .summary-close {
+      background: none;
+      border: none;
+      color: var(--subtext);
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 0 2px;
+      transition: color 0.15s;
+    }
+    .summary-close:hover { color: var(--text); }
+
+    .summary-loading {
+      display: none;
+      color: var(--subtext);
+      font-size: 0.82rem;
+      text-align: center;
+      padding: 10px 0;
+    }
+    .summary-loading.visible { display: block; }
+
+    .summary-body {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .summary-body li {
+      display: flex;
+      gap: 8px;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .summary-body li::before {
+      content: '●';
+      color: var(--green);
+      font-size: 0.5rem;
+      margin-top: 0.48em;
+      flex-shrink: 0;
+    }
+
+    /* ── API key modal ── */
+    .api-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .api-modal.visible { display: flex; }
+
+    .api-modal-box {
+      background: var(--surface);
+      border: 1px solid var(--surface3);
+      border-radius: 12px;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .api-modal-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+    .api-modal-desc {
+      font-size: 0.8rem;
+      color: var(--subtext);
+      line-height: 1.6;
+    }
+    .api-modal-desc a { color: var(--green); }
+    .api-modal-input {
+      background: var(--surface2);
+      border: 1px solid var(--surface3);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.82rem;
+      font-family: monospace;
+      padding: 10px 12px;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+    .api-modal-input:focus { border-color: var(--green); }
+    .api-modal-btns {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .api-modal-btns button {
+      border: none;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .api-modal-btns button:hover { opacity: 0.85; }
+    #api-btn-cancel { background: var(--surface2); color: var(--subtext); }
+    #api-btn-save   { background: var(--green); color: #000; }
+
     /* ── No support ── */
     .no-support {
       display: none;
@@ -302,6 +456,9 @@
       <div id="text-display" class="text-display"></div>
     </div>
 
+    <!-- Summarize button -->
+    <button class="summarize-btn" id="summarize-btn">✦ 要約する</button>
+
     <!-- Progress -->
     <div class="progress-section">
       <div class="progress-bar-wrap" id="progress-wrap">
@@ -314,6 +471,33 @@
       <div class="time-row">
         <span id="time-elapsed">0:00</span>
         <span id="time-remain">0:00</span>
+      </div>
+    </div>
+
+    <!-- Summary section -->
+    <div class="summary-section" id="summary-section">
+      <div class="summary-header">
+        <span class="summary-label">AI 要約</span>
+        <button class="summary-close" id="summary-close" title="閉じる">✕</button>
+      </div>
+      <div class="summary-loading" id="summary-loading">要約を生成中...</div>
+      <ul class="summary-body" id="summary-body"></ul>
+    </div>
+  </div>
+
+  <!-- API key modal -->
+  <div class="api-modal" id="api-modal">
+    <div class="api-modal-box">
+      <p class="api-modal-title">🔑 Gemini APIキーを設定</p>
+      <p class="api-modal-desc">
+        要約にはGoogle Gemini APIキーが必要です。<br>
+        <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> で無料取得できます（登録不要）。<br>
+        キーはこのデバイスにのみ保存されます。
+      </p>
+      <input class="api-modal-input" type="password" id="api-key-input" placeholder="AIzaSy...">
+      <div class="api-modal-btns">
+        <button id="api-btn-cancel">キャンセル</button>
+        <button id="api-btn-save">保存して要約</button>
       </div>
     </div>
   </div>
@@ -652,6 +836,113 @@
     document.addEventListener('touchend',       (e) => onDragEnd(e.changedTouches[0].clientX));
 
     window.addEventListener('beforeunload', () => synth.cancel());
+
+    // ── Summarize feature ──
+    const summarizeBtn  = document.getElementById('summarize-btn');
+    const summarySection = document.getElementById('summary-section');
+    const summaryLoading = document.getElementById('summary-loading');
+    const summaryBody   = document.getElementById('summary-body');
+    const summaryClose  = document.getElementById('summary-close');
+    const apiModal      = document.getElementById('api-modal');
+    const apiKeyInput   = document.getElementById('api-key-input');
+    const apiBtnSave    = document.getElementById('api-btn-save');
+    const apiBtnCancel  = document.getElementById('api-btn-cancel');
+
+    // Show/hide summarize button based on text content
+    textInput.addEventListener('input', updateSummarizeBtn);
+    function updateSummarizeBtn() {
+      if (textInput.value.trim().length > 30) {
+        summarizeBtn.classList.add('visible');
+      } else {
+        summarizeBtn.classList.remove('visible');
+        summarySection.classList.remove('visible');
+      }
+    }
+
+    summarizeBtn.addEventListener('click', () => {
+      const key = localStorage.getItem('geminiApiKey');
+      if (!key) {
+        apiKeyInput.value = '';
+        apiModal.classList.add('visible');
+      } else {
+        runSummarize(key);
+      }
+    });
+
+    apiBtnCancel.addEventListener('click', () => {
+      apiModal.classList.remove('visible');
+    });
+
+    apiBtnSave.addEventListener('click', () => {
+      const key = apiKeyInput.value.trim();
+      if (!key) return;
+      localStorage.setItem('geminiApiKey', key);
+      apiModal.classList.remove('visible');
+      runSummarize(key);
+    });
+
+    summaryClose.addEventListener('click', () => {
+      summarySection.classList.remove('visible');
+    });
+
+    async function runSummarize(apiKey) {
+      const text = textInput.value.trim();
+      if (!text) return;
+
+      // Show loading state
+      summarizeBtn.classList.add('loading');
+      summarizeBtn.textContent = '要約中...';
+      summaryBody.innerHTML = '';
+      summaryLoading.classList.add('visible');
+      summarySection.classList.add('visible');
+      summarySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      try {
+        const prompt =
+          '以下のテキストを日本語で3〜5点の箇条書きに要約してください。' +
+          '各項目は「・」で始め、簡潔に要点だけを書いてください。\n\n' + text;
+
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { temperature: 0.4, maxOutputTokens: 512 }
+            })
+          }
+        );
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          if (res.status === 400 || res.status === 403) {
+            // Likely bad API key — clear it so user can re-enter
+            localStorage.removeItem('geminiApiKey');
+          }
+          throw new Error(err?.error?.message || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        // Parse lines starting with ・ or - or numbers
+        const lines = raw
+          .split('\n')
+          .map(l => l.replace(/^[\s・\-\*\d\.]+/, '').trim())
+          .filter(l => l.length > 0);
+
+        summaryLoading.classList.remove('visible');
+        summaryBody.innerHTML = lines.map(l => `<li>${l}</li>`).join('');
+
+      } catch (e) {
+        summaryLoading.classList.remove('visible');
+        summaryBody.innerHTML = `<li style="color:var(--subtext)">エラー: ${e.message}</li>`;
+      } finally {
+        summarizeBtn.classList.remove('loading');
+        summarizeBtn.textContent = '✦ 要約する';
+      }
+    }
 
     // Prevent pinch zoom on iOS Safari (ignores user-scalable=no since iOS 10)
     document.addEventListener('touchmove', (e) => {
