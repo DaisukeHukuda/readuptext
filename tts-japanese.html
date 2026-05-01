@@ -240,16 +240,6 @@
     .play-btn:active { transform: scale(0.96); }
     .play-btn svg { color: #000; }
 
-    /* ── Secondary controls ── */
-    .secondary-controls {
-      width: 100%;
-      max-width: 480px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 6px;
-    }
-
     .speed-btn {
       background: none;
       border: 1px solid var(--subtext);
@@ -258,6 +248,8 @@
       font-size: 0.72rem;
       font-weight: 700;
       padding: 3px 7px;
+      min-width: 44px;
+      text-align: center;
       cursor: pointer;
       font-family: inherit;
       transition: color 0.15s, border-color 0.15s;
@@ -265,6 +257,11 @@
     }
     .speed-btn:hover { color: var(--text); border-color: var(--text); }
 
+    /* ghost mirrors speed-btn for centering the play button */
+    .ctrl-ghost {
+      min-width: 44px;
+      flex-shrink: 0;
+    }
 
     /* ── No support ── */
     .no-support {
@@ -319,6 +316,9 @@
   <!-- Player bar -->
   <div class="player-bar">
     <div class="main-controls">
+      <!-- Speed (left, balances stop on right) -->
+      <button class="speed-btn" id="speed-btn">1×</button>
+
       <!-- Skip back 15s -->
       <button class="ctrl-btn" id="btn-rewind" title="15秒戻る" disabled>
         <svg width="30" height="30" viewBox="0 0 28 28" fill="none">
@@ -347,11 +347,9 @@
           <path d="M6 6h12v12H6z"/>
         </svg>
       </button>
-    </div>
 
-    <!-- Secondary controls -->
-    <div class="secondary-controls">
-      <button class="speed-btn" id="speed-btn">1×</button>
+      <!-- Ghost spacer (mirrors speed btn width for centering) -->
+      <div class="ctrl-ghost"></div>
     </div>
   </div>
 
