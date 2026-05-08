@@ -264,6 +264,169 @@
       line-height: 1;
     }
 
+    /* ── 履歴ボタン ── */
+    .hist-open-btn {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: var(--subtext);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: color 0.15s;
+      flex-shrink: 0;
+    }
+    .hist-open-btn:hover { color: var(--text); }
+
+    /* ── 履歴オーバーレイ ── */
+    .hist-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .hist-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .hist-panel {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      background: var(--bg);
+      border-radius: 16px 16px 0 0;
+      padding: 0 0 env(safe-area-inset-bottom);
+      max-height: 90dvh;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.32,0.72,0,1);
+    }
+    .hist-overlay.open .hist-panel {
+      transform: translateY(0);
+    }
+
+    .hist-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px 12px;
+      border-bottom: 1px solid var(--surface2);
+      flex-shrink: 0;
+    }
+    .hist-panel-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .hist-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hist-clear-btn {
+      background: none;
+      border: 1px solid var(--surface3);
+      color: var(--subtext);
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .hist-clear-btn:hover { color: #e05c5c; border-color: #e05c5c; }
+    .hist-clear-btn:disabled { opacity: 0.3; cursor: default; }
+    .hist-close-btn {
+      background: none;
+      border: none;
+      color: var(--subtext);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .hist-close-btn:hover { color: var(--text); }
+
+    .hist-empty {
+      text-align: center;
+      color: var(--subtext);
+      font-size: 0.88rem;
+      padding: 48px 20px;
+      line-height: 1.7;
+    }
+
+    .hist-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 10px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hist-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .hist-card:hover { background: var(--surface2); border-color: var(--surface3); }
+
+    .hist-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+    .hist-card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hist-card-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .hist-card-meta span {
+      font-size: 0.68rem;
+      color: var(--subtext);
+    }
+    .hist-card-meta .meta-url { color: var(--green); }
+    .hist-card-preview {
+      font-size: 0.75rem;
+      color: var(--subtext);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
+    .hist-delete-btn {
+      background: none;
+      border: none;
+      color: var(--surface3);
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 2px 4px;
+      flex-shrink: 0;
+      transition: color 0.15s;
+      line-height: 1;
+    }
+    .hist-delete-btn:hover { color: #e05c5c; }
+
     /* ── No support ── */
     .no-support {
       display: none;
@@ -276,7 +439,87 @@
       max-width: 480px;
       width: 100%;
     }
+
+    /* ── URL取得エリア ── */
+    .url-section {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .url-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .url-row input[type="url"] {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--surface3);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 0.85rem;
+      padding: 8px 12px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+      min-width: 0;
+    }
+    .url-row input[type="url"]:focus { border-color: var(--green); }
+    .url-row input[type="url"]::placeholder { color: var(--surface3); }
+
+    .url-fetch-btn {
+      background: var(--green);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      border-radius: var(--radius);
+      padding: 8px 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, opacity 0.15s;
+      flex-shrink: 0;
+    }
+    .url-fetch-btn:hover { background: var(--green-h); }
+    .url-fetch-btn:disabled { opacity: 0.4; cursor: default; }
+
+    .url-status {
+      font-size: 0.75rem;
+      color: var(--subtext);
+      min-height: 1em;
+      padding: 0 2px;
+    }
+    .url-status.error { color: #e05c5c; }
+    .url-status.success { color: var(--green); }
+
+    .url-trim-row {
+      display: none;
+      gap: 6px;
+    }
+    .url-trim-row.visible { display: flex; }
+
+    .url-trim-btn {
+      flex: 1;
+      background: transparent;
+      color: var(--subtext);
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px dashed var(--surface3);
+      border-radius: var(--radius);
+      padding: 5px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .url-trim-btn:hover:not(:disabled) { color: #e05c5c; border-color: #e05c5c; }
+    .url-trim-btn.url-undo-btn:hover:not(:disabled) { color: var(--green); border-color: var(--green); }
+    .url-trim-btn:disabled { opacity: 0.3; cursor: default; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@mozilla/readability@0.5.0/Readability.min.js"></script>
 </head>
 <body>
 
@@ -300,6 +543,26 @@
         <rect x="21" y="17.4" width="3" height="6.6"  rx="1.5" fill="#1db954"/>
       </svg>
       <span class="logo-text">TEKIYOMI#2</span>
+      <button class="hist-open-btn" id="hist-open-btn" title="読み上げ履歴">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- URL取得エリア -->
+    <div class="url-section" id="url-section">
+      <div class="url-row">
+        <input type="url" id="url-input" placeholder="URLから記事を取得…" />
+        <button class="url-fetch-btn" id="url-fetch-btn">取得</button>
+      </div>
+      <div class="url-status" id="url-status"></div>
+      <div class="url-trim-row" id="url-trim-row">
+        <button class="url-trim-btn" id="url-trim-top">↑ 先頭削除</button>
+        <button class="url-trim-btn" id="url-trim-bottom">↓ 末尾削除</button>
+        <button class="url-trim-btn url-undo-btn" id="url-undo-btn" disabled>↩ 元に戻す</button>
+      </div>
     </div>
 
     <div class="no-support" id="no-support">
@@ -366,6 +629,20 @@
 
       <!-- Ghost spacer (mirrors speed btn width for centering) -->
       <div class="ctrl-ghost"></div>
+    </div>
+  </div>
+
+  <!-- 履歴パネル -->
+  <div class="hist-overlay" id="hist-overlay">
+    <div class="hist-panel">
+      <div class="hist-panel-header">
+        <div class="hist-panel-title">読み上げ履歴</div>
+        <div class="hist-header-right">
+          <button class="hist-clear-btn" id="hist-clear-btn">全削除</button>
+          <button class="hist-close-btn" id="hist-close-btn">✕</button>
+        </div>
+      </div>
+      <div class="hist-list" id="hist-list"></div>
     </div>
   </div>
 
@@ -518,6 +795,7 @@
     function startReading() {
       const text = textInput.value.trim();
       if (!text) { textInput.focus(); return; }
+      if (typeof window._onStartReading === 'function') window._onStartReading(text);
 
       synth.cancel();
       buildChunks(text);
@@ -674,6 +952,286 @@
       if (now - lastTap < 300) e.preventDefault();
       lastTap = now;
     }, { passive: false });
+
+    // ── 記事テキスト抽出 ──
+    (function() {
+      const urlInput     = document.getElementById('url-input');
+      const urlFetchBtn  = document.getElementById('url-fetch-btn');
+      const urlStatus    = document.getElementById('url-status');
+      const urlTrimRow   = document.getElementById('url-trim-row');
+      const trimTopBtn   = document.getElementById('url-trim-top');
+      const trimBottomBtn= document.getElementById('url-trim-bottom');
+      const undoBtn      = document.getElementById('url-undo-btn');
+
+      const trimHistory = [];
+
+      function setUrlStatus(msg, type = '') {
+        urlStatus.textContent = msg;
+        urlStatus.className = 'url-status ' + type;
+      }
+
+      function saveTrimHistory() {
+        trimHistory.push(textInput.value);
+        undoBtn.disabled = false;
+      }
+
+      function applyText(text) {
+        textInput.value = text;
+        textInput.dispatchEvent(new Event('input'));
+      }
+
+      // Jina Reader
+      async function fetchViaJina(url) {
+        const res = await fetch(`https://r.jina.ai/${url}`, {
+          signal: AbortSignal.timeout(20000),
+          headers: { 'Accept': 'text/plain' }
+        });
+        if (!res.ok) throw new Error('Jina失敗');
+        const text = await res.text();
+        if (!text || text.length < 100) throw new Error('内容なし');
+        if (text.includes('"code":451') || text.includes('SecurityCompromiseError') ||
+            (text.includes('Access Denied') && text.length < 500)) throw new Error('BLOCKED');
+        return text;
+      }
+
+      // CORSプロキシ + Readability
+      async function fetchViaProxy(url) {
+        const res = await fetch(`https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`, {
+          signal: AbortSignal.timeout(12000)
+        });
+        if (!res.ok) throw new Error('プロキシ失敗');
+        const html = await res.text();
+        if (!html || !html.includes('<') || html.includes('Access Denied') || html.length < 500)
+          throw new Error('BLOCKED');
+        return html;
+      }
+
+      function jinaToPlain(raw) {
+        let text = raw.replace(/^(Title|URL Source|Published Time|Markdown Content):.*$/gm, '').trim();
+        text = text.replace(/^#{1,6}\s+/gm, '');
+        text = text.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+        text = text.replace(/!\[[^\]]*\]\([^)]+\)/g, '');
+        text = text.replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1');
+        text = text.replace(/^[-*_]{3,}\s*$/gm, '');
+        text = text.replace(/\r\n/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+        return text;
+      }
+
+      function htmlToPlain(html, url) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const base = doc.createElement('base');
+        base.href = url;
+        doc.head.prepend(base);
+        const NOISE = ['header','footer','nav','aside','form','script','style','noscript','iframe',
+          '[class*="ad"]','[class*="banner"]','[class*="promo"]','[class*="related"]',
+          '[class*="recommend"]','[class*="ranking"]','[class*="sidebar"]','[class*="widget"]',
+          '[class*="subscribe"]','[class*="newsletter"]','[class*="pickup"]','[class*="share"]',
+          '[class*="social"]','[class*="comment"]','[id*="ad"]','[id*="sidebar"]','[id*="related"]',
+          '[role="complementary"]','[role="navigation"]','[role="banner"]'].join(',');
+        doc.querySelectorAll(NOISE).forEach(el => el.remove());
+        const article = new Readability(doc, { charThreshold: 20 }).parse();
+        if (!article || !article.textContent.trim()) throw new Error('本文抽出失敗');
+        return article.textContent.replace(/\r\n/g,'\n').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+      }
+
+      urlFetchBtn.addEventListener('click', async () => {
+        const url = urlInput.value.trim();
+        if (!url) { setUrlStatus('URLを入力してください', 'error'); return; }
+        if (!/^https?:\/\//.test(url)) { setUrlStatus('https:// から始まるURLを入力してください', 'error'); return; }
+
+        urlFetchBtn.disabled = true;
+        urlTrimRow.classList.remove('visible');
+        trimHistory.length = 0;
+        undoBtn.disabled = true;
+        setUrlStatus('取得中…');
+
+        try {
+          let cleaned = '', fetchedTitle = '';
+          try {
+            setUrlStatus('取得中… (1/2)');
+            const raw = await fetchViaJina(url);
+            const titleMatch = raw.match(/^Title:\s*(.+)$/m);
+            fetchedTitle = titleMatch ? titleMatch[1].trim() : '';
+            cleaned = jinaToPlain(raw);
+            if (cleaned.length < 100) throw new Error('短すぎる');
+          } catch (e) {
+            if (e.message === 'BLOCKED') throw e;
+            setUrlStatus('取得中… (2/2)');
+            const html = await fetchViaProxy(url);
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            fetchedTitle = doc.title || '';
+            cleaned = htmlToPlain(html, url);
+          }
+
+          applyText(cleaned);
+          window._articleMeta = { url, title: fetchedTitle, text: cleaned };
+          urlTrimRow.classList.add('visible');
+          setUrlStatus('抽出完了！', 'success');
+        } catch (e) {
+          if (e.message === 'BLOCKED') {
+            setUrlStatus('このサイトは自動取得をブロックしています。ブラウザで記事を開き、テキストを手動でコピーしてください。', 'error');
+          } else {
+            setUrlStatus('取得できませんでした。対応していないサイトの可能性があります。', 'error');
+          }
+        } finally {
+          urlFetchBtn.disabled = false;
+        }
+      });
+
+      urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') urlFetchBtn.click(); });
+
+      trimTopBtn.addEventListener('click', () => {
+        saveTrimHistory();
+        const text = textInput.value;
+        const idx = text.indexOf('\n\n');
+        textInput.value = idx !== -1 ? text.slice(idx + 2).trimStart()
+          : text.slice(text.indexOf('\n') + 1).trimStart();
+        textInput.dispatchEvent(new Event('input'));
+      });
+
+      trimBottomBtn.addEventListener('click', () => {
+        saveTrimHistory();
+        const text = textInput.value.trimEnd();
+        const idx = text.lastIndexOf('\n\n');
+        textInput.value = idx !== -1 ? text.slice(0, idx).trimEnd()
+          : text.slice(0, text.lastIndexOf('\n')).trimEnd();
+        textInput.dispatchEvent(new Event('input'));
+      });
+
+      undoBtn.addEventListener('click', () => {
+        if (!trimHistory.length) return;
+        textInput.value = trimHistory.pop();
+        textInput.dispatchEvent(new Event('input'));
+        if (!trimHistory.length) undoBtn.disabled = true;
+      });
+    })();
+
+    // ── 読み上げ履歴 ──
+    (function() {
+      const STORAGE_KEY = 'tekiyomi_history';
+      const MAX_ENTRIES = 50;
+
+      const overlay    = document.getElementById('hist-overlay');
+      const openBtn    = document.getElementById('hist-open-btn');
+      const closeBtn   = document.getElementById('hist-close-btn');
+      const clearBtn   = document.getElementById('hist-clear-btn');
+      const listEl     = document.getElementById('hist-list');
+
+      // ── ストレージ操作 ──
+      function loadHistory() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+        catch { return []; }
+      }
+      function saveHistory(entries) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      }
+      function addEntry(entry) {
+        const entries = loadHistory().filter(e => e.text !== entry.text);
+        entries.unshift(entry);
+        if (entries.length > MAX_ENTRIES) entries.length = MAX_ENTRIES;
+        saveHistory(entries);
+      }
+      function deleteEntry(id) {
+        saveHistory(loadHistory().filter(e => e.id !== id));
+      }
+
+      // ── 再生開始時に履歴保存（startReading()のフック経由） ──
+      let lastSavedText = '';
+      window._onStartReading = function(text) {
+        if (!text || text === lastSavedText) return;
+        const meta = window._articleMeta;
+        const isSameFetch = meta && meta.text === text;
+        const title = isSameFetch && meta.title ? meta.title
+          : (text.split('\n').find(l => l.trim()) || '').slice(0, 50);
+        addEntry({
+          id: Date.now(),
+          title,
+          text,
+          url: isSameFetch ? meta.url : null,
+        });
+        lastSavedText = text;
+      };
+
+      // ── 表示ヘルパー ──
+      function formatDate(ts) {
+        const d = new Date(ts), now = new Date(), diff = now - d;
+        if (diff < 60000)     return 'たった今';
+        if (diff < 3600000)   return `${Math.floor(diff/60000)}分前`;
+        if (diff < 86400000)  return `${Math.floor(diff/3600000)}時間前`;
+        if (diff < 604800000) return `${Math.floor(diff/86400000)}日前`;
+        return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
+      }
+      function getHostname(url) {
+        try { return new URL(url).hostname; } catch { return ''; }
+      }
+      function esc(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+
+      // ── リスト描画 ──
+      function render() {
+        const entries = loadHistory();
+        clearBtn.disabled = entries.length === 0;
+
+        if (entries.length === 0) {
+          listEl.innerHTML = '<div class="hist-empty">まだ履歴がありません。<br>再生ボタンを押すと記録されます。</div>';
+          return;
+        }
+
+        listEl.innerHTML = '';
+        entries.forEach(entry => {
+          const card = document.createElement('div');
+          card.className = 'hist-card';
+          card.innerHTML = `
+            <div class="hist-card-body">
+              <div class="hist-card-title">${esc(entry.title || '（無題）')}</div>
+              <div class="hist-card-meta">
+                <span>${formatDate(entry.id)}</span>
+                <span>${entry.text.length.toLocaleString()}文字</span>
+                ${entry.url ? `<span class="meta-url">${esc(getHostname(entry.url))}</span>` : ''}
+              </div>
+              <div class="hist-card-preview">${esc(entry.text.replace(/\n+/g,' ').slice(0,60))}</div>
+            </div>
+            <button class="hist-delete-btn" data-id="${entry.id}" title="削除">✕</button>
+          `;
+
+          // カードタップ → テキスト読み込み＆パネルを閉じる
+          card.addEventListener('click', (e) => {
+            if (e.target.classList.contains('hist-delete-btn')) return;
+            textInput.value = entry.text;
+            textInput.dispatchEvent(new Event('input'));
+            window._articleMeta = { url: entry.url, title: entry.title, text: entry.text };
+            lastSavedText = entry.text;
+            closePanel();
+          });
+
+          // 削除ボタン
+          card.querySelector('.hist-delete-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteEntry(entry.id);
+            render();
+          });
+
+          listEl.appendChild(card);
+        });
+      }
+
+      // ── パネル開閉 ──
+      function openPanel() { overlay.classList.add('open'); render(); }
+      function closePanel() { overlay.classList.remove('open'); }
+
+      openBtn.addEventListener('click', openPanel);
+      closeBtn.addEventListener('click', closePanel);
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) closePanel(); });
+
+      clearBtn.addEventListener('click', () => {
+        if (!confirm('履歴をすべて削除しますか？')) return;
+        saveHistory([]);
+        render();
+      });
+    })();
   </script>
 </body>
 </html>
