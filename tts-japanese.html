@@ -266,6 +266,40 @@
       color: #ffffff !important;
       line-height: 1;
     }
+    .logo-status {
+      margin-left: auto;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--green);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .logo-status.visible { opacity: 1; }
+    .logo-status.error   { color: #e05c5c; }
+
+    /* ── 末尾へボタン ── */
+    .scroll-bottom-btn {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--subtext);
+      background: var(--surface2);
+      border: 1px solid var(--surface3);
+      border-radius: 4px;
+      padding: 3px 8px;
+      cursor: pointer;
+      z-index: 1;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s;
+      pointer-events: all;
+    }
+    .scroll-bottom-btn:hover { color: var(--text); border-color: var(--subtext); }
 
     /* ── 履歴ボタン ── */
     .hist-open-btn {
@@ -548,6 +582,7 @@
         <rect x="21" y="17.4" width="3" height="6.6"  rx="1.5" fill="#1db954"/>
       </svg>
       <span class="logo-text">TEKIYOMI#2</span>
+      <div class="logo-status" id="url-status"></div>
     </div>
 
     <div class="no-support" id="no-support">
@@ -559,25 +594,10 @@
       <textarea id="text-input" placeholder="ここにテキストを貼り付けてください..."></textarea>
       <div id="text-display" class="text-display"></div>
       <div class="episode-title" id="episode-title">所要時間</div>
+      <button class="scroll-bottom-btn" id="scroll-bottom-btn">↓ 末尾へ</button>
     </div>
 
-    <!-- URL取得エリア（テキスト入力欄の下） -->
-    <div class="url-section" id="url-section">
-      <div class="url-row">
-        <input type="url" id="url-input" placeholder="URLから記事を取得…" />
-        <button class="url-fetch-btn" id="url-fetch-btn">取得</button>
-      </div>
-      <div class="url-status" id="url-status"></div>
-    </div>
-
-    <!-- 先頭・末尾削除（進行バーの上） -->
-    <div class="url-trim-row" id="url-trim-row">
-      <button class="url-trim-btn" id="url-trim-top">↑ 先頭削除</button>
-      <button class="url-trim-btn" id="url-trim-bottom">↓ 末尾削除</button>
-      <button class="url-trim-btn url-undo-btn" id="url-undo-btn" disabled>↩ 元に戻す</button>
-    </div>
-
-    <!-- Progress -->
+    <!-- Progress（テキスト入力欄の直下） -->
     <div class="progress-section">
       <div class="progress-bar-wrap" id="progress-wrap">
         <div class="progress-track">
@@ -590,7 +610,21 @@
         <span id="time-elapsed">0:00</span>
         <span id="time-remain">0:00</span>
       </div>
+    <!-- URL取得エリア -->
+    <div class="url-section" id="url-section">
+      <div class="url-row">
+        <input type="url" id="url-input" placeholder="URLから記事を取得…" />
+        <button class="url-fetch-btn" id="url-fetch-btn">取得</button>
+      </div>
     </div>
+
+    <!-- 先頭・末尾削除 -->
+    <div class="url-trim-row" id="url-trim-row">
+      <button class="url-trim-btn" id="url-trim-top">↑ 先頭削除</button>
+      <button class="url-trim-btn" id="url-trim-bottom">↓ 末尾削除</button>
+      <button class="url-trim-btn url-undo-btn" id="url-undo-btn" disabled>↩ 元に戻す</button>
+    </div>
+
   </div>
 
   <!-- Player bar -->
@@ -973,7 +1007,7 @@
 
       function setUrlStatus(msg, type = '') {
         urlStatus.textContent = msg;
-        urlStatus.className = 'url-status ' + type;
+        urlStatus.className = 'logo-status' + (msg ? ' visible' : '') + (type ? ' ' + type : '');
       }
 
       function saveTrimHistory() {
@@ -1087,6 +1121,11 @@
       });
 
       urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') urlFetchBtn.click(); });
+
+      // 末尾へボタン
+      document.getElementById('scroll-bottom-btn').addEventListener('click', () => {
+        textInput.scrollTop = textInput.scrollHeight;
+      });
 
       trimTopBtn.addEventListener('click', () => {
         saveTrimHistory();
