@@ -12,6 +12,9 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ダブルタップズームを全ボタン・入力欄で無効化 */
+    button, input, a, [role="button"] { touch-action: manipulation; }
+
     :root {
       --green:   #1db954;
       --green-h: #1ed760;
