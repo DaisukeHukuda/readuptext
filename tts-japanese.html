@@ -363,10 +363,10 @@
       font-weight: 800;
       color: var(--text);
     }
-    .hist-header-right {
+    .hist-header-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
     .hist-clear-btn {
       background: none;
@@ -628,9 +628,9 @@
 
     <!-- 先頭・末尾削除 -->
     <div class="url-trim-row" id="url-trim-row">
+      <button class="url-trim-btn url-undo-btn" id="url-undo-btn" disabled>↩ 元に戻す</button>
       <button class="url-trim-btn" id="url-trim-top">↑ 先頭削除</button>
       <button class="url-trim-btn" id="url-trim-bottom">↓ 末尾削除</button>
-      <button class="url-trim-btn url-undo-btn" id="url-undo-btn" disabled>↩ 元に戻す</button>
     </div>
 
   </div>
@@ -684,11 +684,11 @@
   <div class="hist-overlay" id="hist-overlay">
     <div class="hist-panel">
       <div class="hist-panel-header">
-        <div class="hist-panel-title">読み上げ履歴</div>
-        <div class="hist-header-right">
+        <div class="hist-header-left">
           <button class="hist-clear-btn" id="hist-clear-btn">全削除</button>
-          <button class="hist-close-btn" id="hist-close-btn">✕</button>
+          <div class="hist-panel-title">読み上げ履歴</div>
         </div>
+        <button class="hist-close-btn" id="hist-close-btn">✕</button>
       </div>
       <div class="hist-list" id="hist-list"></div>
     </div>
