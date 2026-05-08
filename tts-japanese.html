@@ -52,22 +52,23 @@
     .text-panel {
       width: 100%;
       max-width: 480px;
-      flex: 1;
-      min-height: 0;
       display: flex;
       flex-direction: column;
-      position: relative;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .text-panel-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2px;
     }
 
     .episode-title {
-      position: absolute;
-      bottom: 10px;
-      right: 12px;
       font-size: 0.72rem;
       font-weight: 600;
       color: var(--subtext);
-      pointer-events: none;
-      z-index: 1;
     }
 
     .panel-label {
@@ -81,9 +82,9 @@
 
     textarea, .text-display {
       width: 100%;
-      flex: 1;
+      height: 30vh;
       min-height: 80px;
-      max-height: 52vh;
+      max-height: 40vh;
       background: var(--surface2);
       border: 1px solid transparent;
       border-radius: var(--radius);
@@ -283,21 +284,16 @@
 
     /* ── 末尾へボタン ── */
     .scroll-bottom-btn {
-      position: absolute;
-      bottom: 10px;
-      left: 12px;
       font-size: 0.7rem;
       font-weight: 700;
       color: var(--subtext);
-      background: var(--surface2);
+      background: transparent;
       border: 1px solid var(--surface3);
       border-radius: 4px;
       padding: 3px 8px;
       cursor: pointer;
-      z-index: 1;
       font-family: inherit;
       transition: color 0.15s, border-color 0.15s;
-      pointer-events: all;
     }
     .scroll-bottom-btn:hover { color: var(--text); border-color: var(--subtext); }
 
@@ -593,8 +589,10 @@
     <div class="text-panel">
       <textarea id="text-input" placeholder="ここにテキストを貼り付けてください..."></textarea>
       <div id="text-display" class="text-display"></div>
-      <div class="episode-title" id="episode-title">所要時間</div>
-      <button class="scroll-bottom-btn" id="scroll-bottom-btn">↓ 末尾へ</button>
+      <div class="text-panel-footer">
+        <button class="scroll-bottom-btn" id="scroll-bottom-btn">↓ 末尾へ</button>
+        <div class="episode-title" id="episode-title">所要時間</div>
+      </div>
     </div>
 
     <!-- Progress（テキスト入力欄の直下） -->
@@ -610,6 +608,8 @@
         <span id="time-elapsed">0:00</span>
         <span id="time-remain">0:00</span>
       </div>
+    </div>
+
     <!-- URL取得エリア -->
     <div class="url-section" id="url-section">
       <div class="url-row">
