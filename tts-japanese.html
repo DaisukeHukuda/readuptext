@@ -266,18 +266,18 @@
 
     /* ── 履歴ボタン ── */
     .hist-open-btn {
-      margin-left: auto;
       background: none;
       border: none;
       color: var(--subtext);
       cursor: pointer;
-      padding: 4px;
+      padding: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
       transition: color 0.15s;
       flex-shrink: 0;
+      min-width: 44px;
     }
     .hist-open-btn:hover { color: var(--text); }
 
@@ -499,6 +499,8 @@
     .url-trim-row {
       display: none;
       gap: 6px;
+      width: 100%;
+      max-width: 480px;
     }
     .url-trim-row.visible { display: flex; }
 
@@ -543,26 +545,6 @@
         <rect x="21" y="17.4" width="3" height="6.6"  rx="1.5" fill="#1db954"/>
       </svg>
       <span class="logo-text">TEKIYOMI#2</span>
-      <button class="hist-open-btn" id="hist-open-btn" title="読み上げ履歴">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12 6 12 12 16 14"/>
-        </svg>
-      </button>
-    </div>
-
-    <!-- URL取得エリア -->
-    <div class="url-section" id="url-section">
-      <div class="url-row">
-        <input type="url" id="url-input" placeholder="URLから記事を取得…" />
-        <button class="url-fetch-btn" id="url-fetch-btn">取得</button>
-      </div>
-      <div class="url-status" id="url-status"></div>
-      <div class="url-trim-row" id="url-trim-row">
-        <button class="url-trim-btn" id="url-trim-top">↑ 先頭削除</button>
-        <button class="url-trim-btn" id="url-trim-bottom">↓ 末尾削除</button>
-        <button class="url-trim-btn url-undo-btn" id="url-undo-btn" disabled>↩ 元に戻す</button>
-      </div>
     </div>
 
     <div class="no-support" id="no-support">
@@ -574,6 +556,22 @@
       <textarea id="text-input" placeholder="ここにテキストを貼り付けてください..."></textarea>
       <div id="text-display" class="text-display"></div>
       <div class="episode-title" id="episode-title">所要時間</div>
+    </div>
+
+    <!-- URL取得エリア（テキスト入力欄の下） -->
+    <div class="url-section" id="url-section">
+      <div class="url-row">
+        <input type="url" id="url-input" placeholder="URLから記事を取得…" />
+        <button class="url-fetch-btn" id="url-fetch-btn">取得</button>
+      </div>
+      <div class="url-status" id="url-status"></div>
+    </div>
+
+    <!-- 先頭・末尾削除（進行バーの上） -->
+    <div class="url-trim-row" id="url-trim-row">
+      <button class="url-trim-btn" id="url-trim-top">↑ 先頭削除</button>
+      <button class="url-trim-btn" id="url-trim-bottom">↓ 末尾削除</button>
+      <button class="url-trim-btn url-undo-btn" id="url-undo-btn" disabled>↩ 元に戻す</button>
     </div>
 
     <!-- Progress -->
@@ -627,8 +625,13 @@
         </svg>
       </button>
 
-      <!-- Ghost spacer (mirrors speed btn width for centering) -->
-      <div class="ctrl-ghost"></div>
+      <!-- 履歴ボタン（右側） -->
+      <button class="ctrl-btn hist-open-btn" id="hist-open-btn" title="読み上げ履歴">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </button>
     </div>
   </div>
 
